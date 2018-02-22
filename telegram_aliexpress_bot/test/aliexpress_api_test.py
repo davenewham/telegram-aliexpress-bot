@@ -1,6 +1,6 @@
 import unittest
 
-from AliExpressApi import AliExpressApi
+from telegram_aliexpress_bot.aliexpress_api import AliExpressApi
 
 
 class AliExpressApiTest(unittest.TestCase):

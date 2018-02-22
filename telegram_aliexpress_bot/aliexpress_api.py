@@ -1,16 +1,17 @@
 import json
 import requests
 
-from enum import Enum
 from backports.configparser import ConfigParser
+from enum import Enum
 
 
 class AliExpressApi(object):
     def __init__(self):
-        self._read_config()
-        # self._appkey = "78491"  # Public key leaked in the api docs
+        # self._read_config()
+        self._appkey = "78491"  # Public key leaked in the api docs
 
     def _read_config(self):
+        """Reads the config file with the API keys which should be placed where aliexpress_api.py is"""
         import os
         file_path = os.path.join(os.path.dirname(__file__), './config.ini')
         config = ConfigParser()
@@ -25,7 +26,7 @@ class AliExpressApi(object):
         return data
 
     def get_promotion_products(self, keyword):
-        """Gets currently promoted products on AliExpress."""
+        """Gets currently promoted products on AliExpress"""
         promotion_product_url = "http://gw.api.alibaba.com/openapi/param2/2/portals.open/api.listPromotionProduct/" \
                                 + self._appkey
         params = dict(
