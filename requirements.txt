@@ -1,0 +1,2 @@
+requests==2.13.0
+backports.functools_lru_cache==1.5
