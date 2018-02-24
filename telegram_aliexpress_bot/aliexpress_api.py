@@ -7,8 +7,7 @@ from enum import Enum
 
 class AliExpressApi(object):
     def __init__(self):
-        # self._read_config()
-        self._appkey = "78491"  # Public key leaked in the api docs
+        self._read_config()
 
     def _read_config(self):
         """Reads the config file with the API keys which should be placed where aliexpress_api.py is"""
@@ -17,6 +16,7 @@ class AliExpressApi(object):
         config = ConfigParser()
         config.read(file_path)
         self._appkey = config.get('AliExpress', 'appkey')
+        self._tracking_id = config.get('AliExpress', 'trackingId')
 
     @staticmethod
     def _query_json_api(url, params):
@@ -75,3 +75,14 @@ class AliExpressApi(object):
             categoryId=category.value
         )
         return self._query_json_api(hot_product_url, params)
+
+    def get_promotion_link(self, product_link):
+        """Transforms a regular link into a promotion / referral link"""
+        promotion_link_url = "http://gw.api.alibaba.com/openapi/param2/2/portals.open/api.getPromotionLinks/"\
+                             + self._appkey
+        params = dict(
+            trackingId=self._tracking_id,
+            urls=product_link,
+        )
+        result = self._query_json_api(promotion_link_url, params)["result"]
+        return result["promotionUrls"][0]["promotionUrl"]

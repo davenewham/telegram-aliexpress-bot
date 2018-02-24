@@ -1,0 +1,10 @@
+[AliExpress]
+; Public key leaked in the api docs
+appkey = 78491
+trackingId = YOUR_TRACKING_ID
+
+[Telegram]
+token = YOUR_BOT_TOKEN
+
+[Rebrandly]
+apikey = YOUR_API_KEY
