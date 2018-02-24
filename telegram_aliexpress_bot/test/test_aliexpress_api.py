@@ -3,7 +3,7 @@ import unittest
 from telegram_aliexpress_bot.aliexpress_api import AliExpressApi
 
 
-class AliExpressApiTest(unittest.TestCase):
+class TestAliExpressApi(unittest.TestCase):
     def setUp(self):
         self.cut = AliExpressApi()
 
