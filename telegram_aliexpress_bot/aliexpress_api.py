@@ -4,6 +4,8 @@ import requests
 from backports.configparser import ConfigParser
 from enum import Enum
 
+from telegram_aliexpress_bot.rebrandly_api import RebrandlyApi
+
 
 class AliExpressApi(object):
     def __init__(self):
@@ -86,3 +88,9 @@ class AliExpressApi(object):
         )
         result = self._query_json_api(promotion_link_url, params)["result"]
         return result["promotionUrls"][0]["promotionUrl"]
+    
+    def get_short_promotion_link(self, product_link):
+        """Gets a shortened promotion link"""
+        link = self.get_promotion_link(product_link)
+        shortener = RebrandlyApi()
+        return shortener.get_short_url(link, "AliExpress_")

@@ -31,5 +31,11 @@ class TestAliExpressApi(unittest.TestCase):
         link = self.cut.get_promotion_link(product_link)
         self.assertTrue("http://" in link)
 
+    def test_get_short_promotion_link(self):
+        # TODO: Mock Rebrandly API
+        product_link = self.cut.get_hot_products()["result"]["products"][0]["productUrl"]
+        link = self.cut.get_short_promotion_link(product_link)
+        self.assertTrue("rebrand.ly/AliExpress_" in link)
+
 if __name__ == '__main__':
     unittest.main()
