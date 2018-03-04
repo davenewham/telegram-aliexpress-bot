@@ -33,7 +33,7 @@ class RebrandlyApi(object):
 
             if request.status_code == requests.codes.ok:
                 result = request.json()
-                return result["shortUrl"], result["id"]
+                return result["shortUrl"]
 
     @staticmethod
     def _generate_random_id():
