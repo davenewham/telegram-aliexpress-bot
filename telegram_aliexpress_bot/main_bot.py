@@ -5,53 +5,43 @@
 # This program is dedicated to the public domain under the CC0 license.
 """
 import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+import random
+
+from backports.configparser import SafeConfigParser, ConfigParser
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import KeyboardButton
+from telegram import ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from ConfigParser import SafeConfigParser
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+from telegram_aliexpress_bot.aliexpress_api import AliExpressApi
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+aliexpress_api = AliExpressApi()
 
 
-def start(bot, update):
-    keyboard = [[InlineKeyboardButton("Show me an otter!", callback_data='1'),
-                 InlineKeyboardButton("Next item", callback_data='2')],
+def promo(bot, update):
+    query = update
+    data = aliexpress_api.get_hot_products()
 
-                [InlineKeyboardButton("Create Link", callback_data='3')]]
+    result_count = data["result"]["totalResults"]
+    random_result_index = random.randint(0, result_count - 1)
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    update.message.reply_text('Please choose:', reply_markup=reply_markup)
-
-def new(bot, update):
-    reply_keyboard = [['Show me an otter!', 'Next item'], 
-                   ['Make Link', 'Close']]
-
-    response = ReplyKeyboardMarkup(reply_keyboard)
-    update.message.reply_text("what do you want", reply_markup=response)
-
-    # oh wow i suck at this
-    if response == 'Show me an otter!':
-        bot.send_photo(chat_id=query.message.chat_id, photo='https://seaotters.com/wp-content/uploads/2012/03/628x353-otter-cu-yawn.jpg', message_id=query.message.message_id)
-       
-    elif response == 'Close':
-        close_markup = ReplyKeyboardRemove()
-        bot.send_message(chat_id=chat_id, text="I'm back.", reply_markup=reply_markup)
-def button(bot, update):
-    query = update.callback_query
-    if query.data == '1':
-        bot.send_photo(chat_id=query.message.chat_id, photo='https://seaotters.com/wp-content/uploads/2012/03/628x353-otter-cu-yawn.jpg', message_id=query.message.message_id)
-
-    else:
-        
-        bot.edit_message_text(text="Selected option: {}".format(query.data),
-                              chat_id=query.message.chat_id,
-                              message_id=query.message.message_id)
+    bot.send_photo(chat_id=query.message.chat_id,
+                   photo=data["result"]["products"][random_result_index]["imageUrl"],
+                   message_id=query.message.message_id)
 
 
-def help(bot, update):
-    update.message.reply_text("Use /start to test this bot.")
+def search(bot, update, args):
+    print(args)
+    query = update
+    bot.send_photo(chat_id=query.message.chat_id,
+                   photo=args[0],
+                   message_id=query.message.message_id)
+
+
+def link(bot, update, args):
+    pass
 
 
 def error(bot, update, error):
@@ -61,17 +51,16 @@ def error(bot, update, error):
 
 def main():
     # Import api key
-    parser = SafeConfigParser()
+    parser = ConfigParser()
     parser.read('config.ini')
-    botappkey = parser.get('Telegram', 'token')
-    
-    # Create the Updater and pass it your bot's token.
-    updater = Updater(botappkey)
+    bot_token = parser.get('Telegram', 'token')
 
-    updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    updater.dispatcher.add_handler(CommandHandler('help', help))
-    updater.dispatcher.add_handler(CommandHandler('new', new))
+    # Create the Updater and pass it your bot's token.
+    updater = Updater(bot_token)
+
+    updater.dispatcher.add_handler(CommandHandler('promo', promo))
+    updater.dispatcher.add_handler(CommandHandler('search', search, pass_args=True))
+    updater.dispatcher.add_handler(CommandHandler('link', link, pass_args=True))
     updater.dispatcher.add_error_handler(error)
 
     # Start the Bot
