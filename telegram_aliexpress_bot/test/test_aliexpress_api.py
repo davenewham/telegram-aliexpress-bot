@@ -53,5 +53,15 @@ class TestAliExpressApi(unittest.TestCase):
                                                        '5c09')
         self.assertEqual('32719809585', product_id)
 
+    def test_get_promotion_product_detail_from_link(self):
+        data = self.cut.get_promotion_product_detail_from_link('https://de.aliexpress.com/item/WWWOOR-Fashion-Luxury-br'
+                                                               'and-Watches-men-Stainless-Steel-Mesh-strap-Quartz-watch'
+                                                               '-Ultra-Thin-Dial-Clock/32719809585.html')
+        self.assertTrue('https://' in data['result']['imageUrl'])
+        self.assertTrue('https://' in data['result']['productUrl'])
+        self.assertTrue(data['result']['productTitle'] != '')
+        self.assertTrue(data['result']['salePrice'] != '')
+
+
 if __name__ == '__main__':
     unittest.main()

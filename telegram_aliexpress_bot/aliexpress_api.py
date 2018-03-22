@@ -22,7 +22,8 @@ class AliExpressApi(object):
         self._appkey = config.get('AliExpress', 'appkey')
         self._tracking_id = config.get('AliExpress', 'trackingId')
 
-    def _query_json_api(self, url, params):
+    @staticmethod
+    def _query_json_api(url, params):
         """Queries a JSON API"""
         response = requests.get(url=url, params=params)
         data = json.loads(response.text)
@@ -46,6 +47,12 @@ class AliExpressApi(object):
             productId=product_id
         )
         return self._query_json_api(promotion_product_detail_url, params)
+
+    def get_promotion_product_detail_from_link(self, product_url):
+        """Gets details for the product with the given product url"""
+        product_id = self.get_product_id_from_link(product_url)
+        product_details = self.get_promotion_product_detail(product_id)
+        return product_details
 
     class Category(Enum):
         """Categories to be used with  get_hot_products()"""
