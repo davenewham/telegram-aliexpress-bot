@@ -1,11 +1,11 @@
 import json
 import requests
+import sys
 
 from backports.configparser import ConfigParser
 from enum import Enum
 
 from telegram_aliexpress_bot.rebrandly_api import RebrandlyApi
-
 
 class AliExpressApi(object):
     API_URL_BASE = 'http://gw.api.alibaba.com/openapi/param2/2/portals.open/'
@@ -22,7 +22,7 @@ class AliExpressApi(object):
         self._appkey = config.get('AliExpress', 'appkey')
         self._tracking_id = config.get('AliExpress', 'trackingId')
 
-    @staticmethod
+    @staticmethod #is this necesary?
     def _query_json_api(url, params):
         """Queries a JSON API"""
         response = requests.get(url=url, params=params)
